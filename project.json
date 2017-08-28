@@ -1,0 +1,9 @@
+{
+  "name": "blockkeeper-backend",
+  "description": "",
+  "memory": 128,
+  "profile": "blockkeeper-backend",
+  "timeout": 5,
+  "role": "arn:aws:iam::280324697825:role/blockkeeper-backend_lambda_function",
+  "environment": {}
+}

@@ -1,0 +1,4 @@
+{
+  "name": "getUser",
+  "description": "query a user by id"
+}

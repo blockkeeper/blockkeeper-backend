@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "aws-sdk": "^2.104.0"
+  },
+  "name": "getUser",
+  "private": true,
+  "version": "0.1.0",
+  "main": "index.js"
+}
