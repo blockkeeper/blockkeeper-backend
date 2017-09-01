@@ -1,0 +1,4 @@
+{
+  "name": "getCmcticker",
+  "description": "coinmarketcap.io ticker api wrap"
+}
