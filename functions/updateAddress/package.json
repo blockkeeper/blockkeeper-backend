@@ -1,8 +1,8 @@
 {
   "dependencies": {
-    "aws-sdk": "^2.106.0"
+    "aws-sdk": "^2.107.0"
   },
-  "name": "getUser",
+  "name": "updateAddress",
   "private": true,
   "version": "0.1.0",
   "main": "index.js"

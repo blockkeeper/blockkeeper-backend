@@ -1,8 +1,9 @@
 {
   "dependencies": {
-    "aws-sdk": "^2.106.0"
+    "aws-sdk": "^2.106.0",
+    "uuid": "^3.1.0"
   },
-  "name": "getUser",
+  "name": "createAddress",
   "private": true,
   "version": "0.1.0",
   "main": "index.js"

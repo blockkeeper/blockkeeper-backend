@@ -2,7 +2,7 @@
   "dependencies": {
     "aws-sdk": "^2.106.0"
   },
-  "name": "getUser",
+  "name": "getAddressIndex",
   "private": true,
   "version": "0.1.0",
   "main": "index.js"

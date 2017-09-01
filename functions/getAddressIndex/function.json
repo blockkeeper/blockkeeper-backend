@@ -1,0 +1,4 @@
+{
+  "name": "getAddressIndex",
+  "description": "query a set of adresses by userid"
+}
