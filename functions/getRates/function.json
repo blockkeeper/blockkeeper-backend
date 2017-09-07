@@ -1,0 +1,4 @@
+{
+  "name": "getRates",
+  "description": "Get a matrix of currency prices."
+}
