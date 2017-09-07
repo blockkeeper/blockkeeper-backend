@@ -1,9 +1,0 @@
-{
-  "dependencies": {
-    "got": "^7.1.0"
-  },
-  "name": "getCmcglobal",
-  "private": true,
-  "version": "0.1.0",
-  "main": "index.js"
-}
