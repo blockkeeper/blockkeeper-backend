@@ -2,7 +2,7 @@ const AWS_dynamodb = require('aws-sdk/clients/dynamodb')
 let dynamodb = new AWS_dynamodb()
 
 exports.handle = function (e, ctx) {
-  if (e.body && e.body._t && e.body.locale && e.body.coins && Array.isArray(e.body.coins) && e.body.coins.length === 2) {
+  if (e.body && e.body._t && e.body.locale && e.body.coins && Array.isArray(e.body.coins) && e.body.coins.length === 2 && e.body.coins[0] !== e.body.coins[1]) {
     dynamodb.updateItem({
       TableName: 'bk_users', // TODO move to config
       Key: {
