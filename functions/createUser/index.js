@@ -1,9 +1,9 @@
 const uuidv4 = require('uuid/v4')
-const AWS_dynamodb = require('aws-sdk/clients/dynamodb')
-let dynamodb = new AWS_dynamodb()
+const AWSDynamodb = require('aws-sdk/clients/dynamodb')
+let dynamodb = new AWSDynamodb()
 
 exports.handle = function (e, ctx) {
-  if (!e.body || !e.body.userhash || !e.body._t || !e.body.locale || !e.body.coins || Array.isArray(e.body.coins) !== true || e.body.coins.length !== 2) {
+  if (!e.body || !e.body.userhash || !e.body._t || !e.body.locale || !e.body.coins || Array.isArray(e.body.coins) !== true || e.body.coins.length !== 2 || e.body.coins[0] === e.body.coins[1]) {
     return ctx.fail('invalid userdata supplied')
   }
   const user = {
