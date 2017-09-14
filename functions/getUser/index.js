@@ -3,9 +3,9 @@ let dynamodb = new AWSDynamodb()
 const tableName = 'bk_users'  // TODO move to config
 
 exports.handle = function (e, ctx) {
-  if (e.userhash && e.userhash.length <= 1) { // TODO do more checks
-    return ctx.fail('Userhash invalid')
-  }
+  // if (e.userhash && e.userhash.length <= 1) { // TODO do more checks
+  //  return ctx.fail('Userhash invalid')
+  // }
   dynamodb.getItem({
     TableName: tableName,
     Key: {

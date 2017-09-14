@@ -10,6 +10,9 @@ exports.handle = function (e, ctx) {
   if (!e.body || !e.body.data) {
     ctx.fail('Invalid request body')
   }
+  // if (e.userhash && e.userhash.length <= 1) { // TODO do more checks see getUser
+  //  return ctx.fail('Userhash invalid')
+  // }
 
   // if there is a userhash, we want to create a new user
   if (e.body.userhash) {
