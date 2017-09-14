@@ -1,13 +1,13 @@
 const validate = require('uuid-validate')
-const AWS_dynamodb = require('aws-sdk/clients/dynamodb')
-let dynamodb = new AWS_dynamodb()
+const AWSDynamodb = require('aws-sdk/clients/dynamodb')
+let dynamodb = new AWSDynamodb()
 
 exports.handle = function (e, ctx) {
   if (validate(e.userid, 4) !== true) {
-    return ctx.fail('userid invalid')
+    return ctx.fail('Userid invalid')
   }
   if (e.lastkey && validate(e.lastkey, 4) !== true) {
-    return ctx.fail('lastkey invalid')
+    return ctx.fail('Lastkey invalid')
   }
   const queryParameter = {
     TableName: 'bk_addresses', // TODO move to config
@@ -36,10 +36,10 @@ exports.handle = function (e, ctx) {
   dynamodb.query(queryParameter, (err, result) => {
     if (err) {
       console.log(err)
-      return ctx.fail('error')
+      return ctx.fail('Error')
     }
     if (!result || result.Count === 0) {
-      return ctx.fail('addresses not found')
+      return ctx.fail('Addresses not found')
     }
     const formatResult = {
       addresses: result.Items.map((obj) => {

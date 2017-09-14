@@ -1,16 +1,16 @@
 const validate = require('uuid-validate')
-const AWS_dynamodb = require('aws-sdk/clients/dynamodb')
-let dynamodb = new AWS_dynamodb()
+const AWSDynamodb = require('aws-sdk/clients/dynamodb')
+let dynamodb = new AWSDynamodb()
 
 exports.handle = function (e, ctx) {
   if (validate(e.userid, 4) === false) {
-    return ctx.fail('invalid userid supplied')
+    return ctx.fail('Invalid userid supplied')
   }
   if (validate(e.addressid, 4) === false) {
-    return ctx.fail('invalid adressid supplied')
+    return ctx.fail('Invalid adressid supplied')
   }
   if (!e.body || !e.body.data || !e.body.tscs || Array.isArray(e.body.tscs) === false || e.body.tscs.length < 1) {
-    return ctx.fail('invalid body supplied')
+    return ctx.fail('Invalid body supplied')
   }
 
   dynamodb.updateItem({
@@ -42,12 +42,8 @@ exports.handle = function (e, ctx) {
   }, (err, result) => {
     if (err) {
       console.log(err)
-      return ctx.fail('error')
+      return ctx.fail('Error')
     }
-    ctx.succeed({
-      _id: result.Attributes._id.S,
-      data: result.Attributes.data.S,
-      tscs: result.Attributes.tscs.SS
-    })
+    ctx.succeed()
   })
 }

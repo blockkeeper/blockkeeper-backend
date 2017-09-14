@@ -5,6 +5,7 @@ const tsyms = [
   'USD', 'EUR', 'CHF', 'CAD', 'SGD', 'GBP', 'RUB'
 ]
 const cmcApiEndpoint = 'https://min-api.cryptocompare.com/data/pricemulti?extraParams=blockkeeper&fsyms=' + fsyms.join(',') + '&tsyms=' + fsyms.concat(tsyms).join(',')
+const errormessage = 'Cryptocompare api response error'
 
 exports.handle = function (e, ctx) {
   got(cmcApiEndpoint, {
@@ -14,7 +15,7 @@ exports.handle = function (e, ctx) {
   }).then(response => {
     if (response.body && response.body.Response === 'Error') { // crazy api, returns http status 200 with error...
       console.log(response.body)
-      return ctx.fail('cryptocompare api response error')
+      return ctx.fail(errormessage)
     }
     const apiResult = {
       _t: new Date().toISOString(),
@@ -27,7 +28,7 @@ exports.handle = function (e, ctx) {
     })
     ctx.succeed(apiResult)
   }).catch(error => {
-  	console.log(error)
-    ctx.fail('cryptocompare api error')
+    console.log(error)
+    ctx.fail(errormessage)
   })
 }
