@@ -9,10 +9,25 @@ exports.handle = function (e, ctx) {
   if (validate(e.addressid, 4) === false) {
     return ctx.fail('Invalid adressid supplied')
   }
-  if (!e.body || !e.body.data || !e.body.tscs || Array.isArray(e.body.tscs) === false || e.body.tscs.length < 1) {
+  if (!e.body || !e.body.data || !e.body.tscs || Array.isArray(e.body.tscs) === false || e.body.tscs.length > 100) {
     return ctx.fail('Invalid body supplied')
   }
-
+  const updates = {
+    data: {
+      Action: 'PUT',
+      Value: {
+        S: e.body.data
+      }
+    }
+  }
+  if (e.body.tscs.length > 0) {
+    updates.tscs = {
+      Action: 'PUT',
+      Value: {
+        SS: e.body.tscs
+      }
+    }
+  }
   dynamodb.updateItem({
     TableName: 'bk_addresses', // TODO move to config
     Key: {
@@ -23,20 +38,7 @@ exports.handle = function (e, ctx) {
         S: e.userid
       }
     },
-    AttributeUpdates: {
-      data: {
-        Action: 'PUT',
-        Value: {
-          S: e.body.data
-        }
-      },
-      tscs: {
-        Action: 'PUT',
-        Value: {
-          SS: e.body.tscs
-        }
-      }
-    },
+    AttributeUpdates: updates,
     ReturnValues: 'ALL_NEW',
     ReturnConsumedCapacity: 'NONE'
   }, (err, result) => {

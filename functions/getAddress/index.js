@@ -31,7 +31,7 @@ exports.handle = function (e, ctx) {
     ctx.succeed({
       _id: result.Item._id.S,
       data: result.Item.data.S,
-      tscs: result.Item.tscs.SS
+      tscs: result.Item.tscs && result.Item.tscs.SS ? result.Item.tscs.SS : []
     })
   })
 }

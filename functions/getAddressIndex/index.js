@@ -46,7 +46,7 @@ exports.handle = function (e, ctx) {
         return {
           _id: obj._id.S,
           data: obj.data.S,
-          tscs: obj.tscs.SS
+          tscs: obj.tscs && obj.tscs.SS ? obj.tscs.SS : []
         }
       })
     }
