@@ -7,45 +7,34 @@ exports.handle = function (e, ctx) {
   if (validate(e.userid, 4) === false) {
     return ctx.fail('Invalid userid supplied')
   }
-  dynamodb.query({
+  if (!e.body || !e.body._id || !e.body.userhash || e.body._id !== e.userid) {
+    ctx.fail('Invalid request body')
+  }
+  dynamodb.deleteItem({
     TableName: tableName,
-    IndexName: '_id-index',
-    KeyConditions: {
-      _id: {
-        ComparisonOperator: 'EQ',
-        AttributeValueList: [
-          { S: e.userid }
-        ]
+    Key: {
+      userhash: {
+        S: e.body.userhash
       }
     },
-    Select: 'SPECIFIC_ATTRIBUTES',
-    AttributesToGet: [
-      'userhash'
-    ]
+    Expected: {
+      _id: {
+        Value: { S: e.userid },
+        Exists: true
+      },
+      userhash: {
+        Value: { S: e.body.userhash },
+        Exists: true
+      }
+    },
+    ReturnConsumedCapacity: 'NONE',
+    ReturnItemCollectionMetrics: 'NONE',
+    ReturnValues: 'NONE'
   }, (err, result) => {
     if (err) {
       console.log(err)
       return ctx.fail('Error')
     }
-    if (result && result.Count === 0) {
-      return ctx.fail('Userid not found')
-    }
-    dynamodb.deleteItem({
-      TableName: tableName,
-      Key: {
-        userhash: {
-          S: result.Items[0].userhash.S
-        }
-      },
-      ReturnConsumedCapacity: 'NONE',
-      ReturnItemCollectionMetrics: 'NONE',
-      ReturnValues: 'NONE'
-    }, (err, result) => {
-      if (err) {
-        console.log(err)
-        return ctx.fail('Error')
-      }
-      ctx.succeed()
-    })
+    ctx.succeed()
   })
 }
