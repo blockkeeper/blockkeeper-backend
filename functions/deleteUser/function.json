@@ -1,0 +1,4 @@
+{
+  "name": "deleteUser",
+  "description": "delete a user by userid"
+}
