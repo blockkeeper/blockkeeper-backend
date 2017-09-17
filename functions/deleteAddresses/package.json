@@ -1,9 +1,9 @@
 {
   "dependencies": {
-    "aws-sdk": "^2.114.0",
-    "uuid-validate": "^0.0.2"
+    "async": "^2.5.0",
+    "aws-sdk": "^2.114.0"
   },
-  "name": "deleteUser",
+  "name": "getUser",
   "private": true,
   "version": "0.1.0",
   "main": "index.js"

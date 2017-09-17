@@ -1,0 +1,4 @@
+{
+  "name": "deleteAdresses",
+  "description": "deletes all adresses for a userid"
+}
