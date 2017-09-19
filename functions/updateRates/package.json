@@ -1,0 +1,11 @@
+{
+  "dependencies": {
+    "async": "^2.5.0",
+    "got": "^7.1.0",
+    "aws-sdk": "^2.114.0"
+  },
+  "name": "updateRates",
+  "private": true,
+  "version": "0.1.0",
+  "main": "index.js"
+}
