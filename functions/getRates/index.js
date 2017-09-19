@@ -1,57 +1,49 @@
-const got = require('got')
-const parallel = require('async/parallel')
-const fsyms = [ 'BTC', 'ETH', 'DASH', 'LTC' ]
-// api breaks if we use all tsyms parameter in one call
-// const tsyms = [ 'AUD', 'BRL', 'CAD', 'CHF', 'CLP', 'CNY', 'CZK', 'DKK', 'EUR', 'GBP', 'HKD', 'HUF', 'IDR', 'ILS', 'INR', 'JPY', 'KRW', 'MXN', 'MYR', 'NOK', 'NZD', 'PHP', 'PKR', 'PLN', 'RUB', 'SEK', 'SGD', 'THB', 'TRY', 'TWD', 'ZAR' ]
-const tsyms1 = ['AUD', 'BRL', 'CAD', 'CHF', 'CLP', 'CNY', 'CZK', 'DKK', 'EUR', 'GBP', 'HKD', 'HUF', 'IDR', 'ILS', 'INR', 'JPY', 'KRW', 'MXN', 'MYR', 'NOK', 'NZD']
-const tsyms2 = ['PHP', 'PKR', 'PLN', 'RUB', 'SEK', 'SGD', 'THB', 'TRY', 'TWD', 'ZAR']
-const errormessage = 'Cryptocompare api response error'
-const doRequest = function (tsymsCut, cb) {
-  const apiEndpoint = 'https://min-api.cryptocompare.com/data/pricemulti?extraParams=blockkeeper&fsyms=' + fsyms.join(',') + '&tsyms=' + [].concat(fsyms, tsymsCut).join(',')
-  got(apiEndpoint, {
-    timeout: 1900,
-    retries: 2,
-    json: true
-  }).then(response => {
-    if (response.body && response.body.Response === 'Error') { // crazy api, returns http status 200 with error...
-      console.log(response.body)
-      return cb(errormessage)
+const AWSDynamodb = require('aws-sdk/clients/dynamodb')
+let dynamodb = new AWSDynamodb()
+const tableName = 'bk_rates'  // TODO move to config
+const scanRates = (dynamoRates, lastKey, cb) => {
+  const queryParameter = {
+    TableName: tableName,
+    AttributesToGet: [
+      'pair',
+      'rate'
+    ],
+    Select: 'SPECIFIC_ATTRIBUTES',
+    ReturnConsumedCapacity: 'NONE'
+  }
+  if (lastKey) {
+    queryParameter.ExclusiveStartKey = lastKey
+  }
+  dynamodb.scan(queryParameter, (err, result) => {
+    if (err) {
+      return cb(err)
     }
-    cb(null, response)
-  }).catch(error => {
-    cb(null, error)
+    if (result.LastEvaluatedKey) {
+      scanRates(
+        [].concat(dynamoRates, result.Items),
+        result.LastEvaluatedKey,
+        cb
+      )
+    } else {
+      cb(null, [].concat(dynamoRates, result.Items))
+    }
   })
 }
+
 exports.handle = function (e, ctx) {
-  // TODO remove second call if api behavior changes
-  parallel([
-    function (cb) {
-      doRequest(tsyms1, cb)
-    },
-    function (cb) {
-      doRequest(tsyms2, cb)
-    }
-  ], function (err, results) {
+  scanRates([], null, (err, dynamoRates) => {
     if (err) {
       console.log(err)
-      return ctx.fail(errormessage)
-    }
-    const apiResult = {
-      _t: new Date().toISOString(),
-      pairs: {},
-      error: false
-    }
-    results.forEach((response) => {
-      if (response.body && response.body.Response === 'Error') { // crazy api, returns http status 200 with error...
-        console.log(response.body)
-        apiResult.error = true
+      return ctx.fail()
+    } else {
+      const apiResult = {
+        _t: new Date().toISOString(),
+        pairs: {}
       }
-      fsyms.forEach((coin) => {
-        for (const key of Object.keys(response.body[coin])) {
-          apiResult.pairs[coin + '_' + key] = response.body[coin][key]
-        }
+      dynamoRates.forEach((i) => {
+        apiResult.pairs[i.pair.S] = Number(i.rate.N)
       })
-    })
-    apiResult.error === true ? ctx.fail(errormessage) : ctx.succeed(apiResult)
+      ctx.succeed(apiResult)
+    }
   })
 }
