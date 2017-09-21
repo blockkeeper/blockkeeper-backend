@@ -5,13 +5,13 @@ const got = require('got')
 const parallel = require('async/parallel')
 const retry = require('async/retry')
 const fsyms = [ 'BTC', 'ETH', 'DASH', 'LTC' ]
-// api breaks if we use all tsyms parameter in one call
-// const tsyms = [ 'AUD', 'BRL', 'CAD', 'CHF', 'CLP', 'CNY', 'CZK', 'DKK', 'EUR', 'GBP', 'HKD', 'HUF', 'IDR', 'ILS', 'INR', 'JPY', 'KRW', 'MXN', 'MYR', 'NOK', 'NZD', 'PHP', 'PKR', 'PLN', 'RUB', 'SEK', 'SGD', 'THB', 'TRY', 'TWD', 'ZAR' ]
-const tsyms1 = ['AUD', 'BRL', 'CAD', 'CHF', 'CLP', 'CNY', 'CZK', 'DKK', 'EUR', 'GBP', 'HKD', 'HUF', 'IDR', 'ILS', 'INR', 'JPY', 'KRW', 'MXN', 'MYR', 'NOK', 'NZD']
-const tsyms2 = ['PHP', 'PKR', 'PLN', 'RUB', 'SEK', 'SGD', 'THB', 'TRY', 'TWD', 'ZAR']
+// api breaks
+// const tsyms = [ 'AUD', 'BRL', 'CAD', 'CHF', 'CLP', 'CNY', 'CZK', 'DKK', 'EUR', 'GBP', 'HKD', 'HUF', 'IDR', 'ILS', 'INR', 'JPY', 'KRW', 'MXN', 'MYR', 'NOK', 'NZD', 'PHP', 'PKR', 'PLN', 'RUB', 'SEK', 'SGD', 'THB', 'TRY', 'TWD', 'ZAR', 'USD' ]
+const tsyms = [ 'AUD', 'CAD', 'EUR', 'GBP', 'MYR', 'NZD', 'USD' ]
+const combineRates = [].concat(fsyms, tsyms)
 const errormessage = 'Cryptocompare api response error'
-const doRequest = function (tsymsCut, cb) {
-  const apiEndpoint = 'https://min-api.cryptocompare.com/data/pricemulti?extraParams=blockkeeper&fsyms=' + fsyms.join(',') + '&tsyms=' + [].concat(fsyms, tsymsCut).join(',')
+const doRequest = function (cb) {
+  const apiEndpoint = 'https://min-api.cryptocompare.com/data/pricemulti?extraParams=blockkeeper&fsyms=' + combineRates.join(',') + '&tsyms=' + combineRates.join(',')
   got(apiEndpoint, {
     timeout: 1900,
     retries: 3,
@@ -48,32 +48,22 @@ const doInsert = function (row, cb) {
   })
 }
 exports.handle = function (e, ctx) {
-  // TODO remove second call if api behavior changes
-  parallel([
-    function (cb) {
-      doRequest(tsyms1, cb)
-    },
-    function (cb) {
-      doRequest(tsyms2, cb)
-    }
-  ], function (err, results) {
+  doRequest((err, body) => {
     if (err) {
       return ctx.fail(err)
     }
     const insertStacker = []
-    results.forEach((body) => {
-      fsyms.forEach((coin) => {
-        for (const key of Object.keys(body[coin])) {
-          insertStacker.push((cb) => {
-            retry(3, (callback) => {
-              doInsert({
-                pair: coin + '_' + key,
-                rate: body[coin][key]
-              }, callback)
-            }, cb)
-          })
-        }
-      })
+    combineRates.forEach((coin) => {
+      for (const key of Object.keys(body[coin])) {
+        insertStacker.push((cb) => {
+          retry(3, (callback) => {
+            doInsert({
+              pair: coin + '_' + key,
+              rate: body[coin][key]
+            }, callback)
+          }, cb)
+        })
+      }
     })
     parallel(insertStacker, (err) => {
       if (err) {
