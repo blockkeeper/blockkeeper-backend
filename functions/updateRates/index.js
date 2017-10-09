@@ -7,7 +7,7 @@ const retry = require('async/retry')
 const fsyms = [ 'BTC', 'ETH', 'DASH', 'LTC' ]
 // api breaks
 // const tsyms = [ 'AUD', 'BRL', 'CAD', 'CHF', 'CLP', 'CNY', 'CZK', 'DKK', 'EUR', 'GBP', 'HKD', 'HUF', 'IDR', 'ILS', 'INR', 'JPY', 'KRW', 'MXN', 'MYR', 'NOK', 'NZD', 'PHP', 'PKR', 'PLN', 'RUB', 'SEK', 'SGD', 'THB', 'TRY', 'TWD', 'ZAR', 'USD' ]
-const tsyms = [ 'AUD', 'CAD', 'EUR', 'GBP', 'MYR', 'NZD', 'USD' ]
+const tsyms = [ 'AUD', 'CAD', 'EUR', 'GBP', 'USD' ]
 const combineRates = [].concat(fsyms, tsyms)
 const errormessage = 'Cryptocompare api response error'
 const doRequest = function (cb) {
