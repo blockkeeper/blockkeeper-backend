@@ -1,34 +1,39 @@
+const validate = require('uuid-validate')
 const AWSDynamodb = require('aws-sdk/clients/dynamodb')
 let dynamodb = new AWSDynamodb()
 const tableName = 'bk_users'  // TODO move to config
 
 exports.handle = function (e, ctx) {
-  // if (e.userhash && e.userhash.length <= 1) { // TODO do more checks
-  //  return ctx.fail('Userhash invalid')
-  // }
-  dynamodb.getItem({
+  if (validate(e.userid, 4) !== true) {
+    return ctx.fail('Userid invalid')
+  }
+
+  dynamodb.query({
     TableName: tableName,
-    Key: {
-      userhash: {
-        S: e.userhash
+    IndexName: '_id-index',
+    KeyConditions: {
+      _id: {
+        ComparisonOperator: 'EQ',
+        AttributeValueList: [
+            { S: e.userid }
+        ]
       }
     },
     AttributesToGet: [
       '_id',
       'data'
-    ],
-    ReturnConsumedCapacity: 'NONE'
+    ]
   }, (err, result) => {
-    if (err) {
-      console.log(err)
+    if (err || result.Count > 1) {
+      console.log(err || JSON.stringify(result))
       return ctx.fail('Error')
     }
-    if (!result || !result.Item) {
+    if (!result || result.Count === 0) {
       return ctx.fail('User not found')
     }
     ctx.succeed({
-      _id: result.Item._id.S,
-      data: result.Item.data.S
+      _id: result.Items[0]._id.S,
+      data: result.Items[0].data.S
     })
   })
 }

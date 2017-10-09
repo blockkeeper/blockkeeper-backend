@@ -1,4 +1,4 @@
 {
   "name": "getUser",
-  "description": "query a user by id"
+  "description": "get a user by _id"
 }
