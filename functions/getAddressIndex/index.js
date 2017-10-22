@@ -23,6 +23,7 @@ exports.handle = function (e, ctx) {
     AttributesToGet: [
       '_id',
       'data',
+      'type',
       'tscs'
     ],
     ReturnConsumedCapacity: 'NONE'
@@ -46,6 +47,7 @@ exports.handle = function (e, ctx) {
         return {
           _id: obj._id.S,
           data: obj.data.S,
+          type: obj.type.S,
           tscs: obj.tscs && obj.tscs.SS ? obj.tscs.SS : []
         }
       })

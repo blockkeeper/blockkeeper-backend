@@ -1,6 +1,7 @@
 const validate = require('uuid-validate')
 const AWSDynamodb = require('aws-sdk/clients/dynamodb')
 let dynamodb = new AWSDynamodb()
+const tscTypesAllowed = ['hd', 'std', 'man']
 
 exports.handle = function (e, ctx) {
   if (validate(e.userid, 4) === false) {
@@ -9,7 +10,15 @@ exports.handle = function (e, ctx) {
   if (validate(e.addressid, 4) === false) {
     return ctx.fail('Invalid adressid supplied')
   }
-  if (!e.body || !e.body.data || !e.body.tscs || Array.isArray(e.body.tscs) === false || e.body.tscs.length > 100) {
+  if (
+      !e.body ||
+      !e.body.data ||
+      !e.body.type ||
+      !e.body.tscs ||
+      tscTypesAllowed.indexOf(e.body.type) === -1 ||
+      Array.isArray(e.body.tscs) === false ||
+      e.body.tscs.length > 100
+    ) {
     return ctx.fail('Invalid body supplied')
   }
   const updates = {
@@ -17,6 +26,12 @@ exports.handle = function (e, ctx) {
       Action: 'PUT',
       Value: {
         S: e.body.data
+      }
+    },
+    type: {
+      Action: 'PUT',
+      Value: {
+        S: e.body.type
       }
     }
   }

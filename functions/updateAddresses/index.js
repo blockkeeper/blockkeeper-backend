@@ -1,6 +1,7 @@
 const validate = require('uuid-validate')
 const AWSDynamodb = require('aws-sdk/clients/dynamodb')
 let dynamodb = new AWSDynamodb()
+const tscTypesAllowed = ['hd', 'std', 'man']
 
 exports.handle = function (e, ctx) {
   if (validate(e.userid, 4) === false) {
@@ -12,7 +13,11 @@ exports.handle = function (e, ctx) {
   const puts = []
   let itemError = false
   e.body.addresses.forEach((i) => {
-    if (validate(i._id, 4) !== true || i.tscs.length > 100) {
+    if (
+        validate(i._id, 4) !== true ||
+        i.tscs.length > 100 ||
+        tscTypesAllowed.indexOf(i.type) === -1
+    ) {
       itemError = true
     }
     const putItem = {
@@ -26,6 +31,9 @@ exports.handle = function (e, ctx) {
           },
           data: {
             S: i.data
+          },
+          type: {
+            S: i.type
           }
         }
       }
