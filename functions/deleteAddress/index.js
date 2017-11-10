@@ -4,8 +4,8 @@ let dynamodb = new AWSDynamodb()
 const tableName = 'bk_addresses'  // TODO move to config
 
 exports.handle = function (e, ctx) {
-  if (validate(e.userid, 4) === false) {
-    return ctx.fail('Invalid addressid supplied')
+  if (validate(e.userid, 4) === false || e.userid !== e.headers['x-user-id']) {
+    return ctx.fail('Invalid userid supplied')
   }
   if (validate(e.addressid, 4) === false) {
     return ctx.fail('Invalid addressid supplied')

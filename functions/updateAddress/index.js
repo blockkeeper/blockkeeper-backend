@@ -4,7 +4,7 @@ let dynamodb = new AWSDynamodb()
 const tscTypesAllowed = ['hd', 'std', 'man']
 
 exports.handle = function (e, ctx) {
-  if (validate(e.userid, 4) === false) {
+  if (validate(e.userid, 4) === false || e.userid !== e.headers['x-user-id']) {
     return ctx.fail('Invalid userid supplied')
   }
   if (validate(e.addressid, 4) === false) {
