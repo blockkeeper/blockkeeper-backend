@@ -3,7 +3,7 @@ const AWSDynamodb = require('aws-sdk/clients/dynamodb')
 let dynamodb = new AWSDynamodb()
 
 exports.handle = function (e, ctx) {
-  if (validate(e.userid, 4) !== true) {
+  if (validate(e.headers['x-user-id'], 4) !== true) {
     return ctx.fail('Invalid userid supplied')
   }
   if (validate(e.addressid, 4) !== true) {
@@ -16,7 +16,7 @@ exports.handle = function (e, ctx) {
         S: e.addressid
       },
       userid: {
-        S: e.userid
+        S: e.headers['x-user-id']
       }
     },
     ReturnConsumedCapacity: 'NONE'

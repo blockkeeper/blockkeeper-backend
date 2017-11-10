@@ -4,7 +4,7 @@ let dynamodb = new AWSDynamodb()
 const tableName = 'bk_addresses'  // TODO move to config
 
 exports.handle = function (e, ctx) {
-  if (validate(e.userid, 4) === false || e.userid !== e.headers['x-user-id']) {
+  if (validate(e.headers['x-user-id'], 4) === false) {
     return ctx.fail('Invalid userid supplied')
   }
   if (validate(e.addressid, 4) === false) {
@@ -17,7 +17,7 @@ exports.handle = function (e, ctx) {
         S: e.addressid
       },
       userid: {
-        S: e.userid
+        S: e.headers['x-user-id']
       }
     },
     Expected: {
@@ -26,7 +26,7 @@ exports.handle = function (e, ctx) {
         Exists: true
       },
       userid: {
-        Value: { S: e.userid },
+        Value: { S: e.headers['x-user-id'] },
         Exists: true
       }
     },

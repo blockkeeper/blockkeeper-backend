@@ -4,7 +4,7 @@ let dynamodb = new AWSDynamodb()
 const tscTypesAllowed = ['hd', 'std', 'man']
 
 exports.handle = function (e, ctx) {
-  if (validate(e.userid, 4) === false || e.userid !== e.headers['x-user-id']) {
+  if (validate(e.headers['x-user-id'], 4) === false) {
     return ctx.fail('Invalid userid supplied')
   }
   if (!e.body || !e.body.addresses || Array.isArray(e.body.addresses) === false || e.body.addresses.length > 25) {
@@ -27,7 +27,7 @@ exports.handle = function (e, ctx) {
             S: i._id
           },
           userid: {
-            S: e.userid
+            S: e.headers['x-user-id']
           },
           data: {
             S: i.data

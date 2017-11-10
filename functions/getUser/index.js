@@ -4,7 +4,7 @@ let dynamodb = new AWSDynamodb()
 const tableName = 'bk_users'  // TODO move to config
 
 exports.handle = function (e, ctx) {
-  if (validate(e.userid, 4) !== true) {
+  if (validate(e.headers['x-user-id'], 4) !== true) {
     return ctx.fail('Userid invalid')
   }
 
@@ -15,7 +15,7 @@ exports.handle = function (e, ctx) {
       _id: {
         ComparisonOperator: 'EQ',
         AttributeValueList: [
-            { S: e.userid }
+            { S: e.headers['x-user-id'] }
         ]
       }
     },

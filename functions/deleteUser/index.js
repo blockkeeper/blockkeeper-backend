@@ -4,10 +4,10 @@ let dynamodb = new AWSDynamodb()
 const tableName = 'bk_users'  // TODO move to config
 
 exports.handle = function (e, ctx) {
-  if (validate(e.userid, 4) === false || e.userid !== e.headers['x-user-id']) {
+  if (validate(e.headers['x-user-id'], 4) === false) {
     return ctx.fail('Invalid userid supplied')
   }
-  if (!e.body || !e.body._id || !e.body.userhash || e.body._id !== e.userid) {
+  if (!e.body || !e.body._id || !e.body.userhash || e.body._id !== e.headers['x-user-id']) {
     ctx.fail('Invalid request body')
   }
   dynamodb.deleteItem({
@@ -19,7 +19,7 @@ exports.handle = function (e, ctx) {
     },
     Expected: {
       _id: {
-        Value: { S: e.userid },
+        Value: { S: e.headers['x-user-id'] },
         Exists: true
       },
       userhash: {
