@@ -8,32 +8,27 @@ exports.handle = function (e, ctx) {
     return ctx.fail('Userid invalid')
   }
 
-  dynamodb.query({
+  dynamodb.getItem({
     TableName: tableName,
-    IndexName: '_id-index',
-    KeyConditions: {
+    Key: {
       _id: {
-        ComparisonOperator: 'EQ',
-        AttributeValueList: [
-            { S: e.headers['x-user-id'] }
-        ]
+        S: e.headers['x-user-id']
       }
     },
     AttributesToGet: [
-      '_id',
       'data'
     ]
   }, (err, result) => {
-    if (err || result.Count > 1) {
+    if (err) {
       console.log(err || JSON.stringify(result))
       return ctx.fail('Error')
     }
-    if (!result || result.Count === 0) {
+    if (!result || !result.Item) {
       return ctx.fail('User not found')
     }
     ctx.succeed({
-      _id: result.Items[0]._id.S,
-      data: result.Items[0].data.S
+      _id: e.headers['x-user-id'],
+      data: result.Item.data.S
     })
   })
 }
