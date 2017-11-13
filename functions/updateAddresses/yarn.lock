@@ -2,9 +2,9 @@
 # yarn lockfile v1
 
 
-aws-sdk@^2.114.0:
-  version "2.123.0"
-  resolved "https://registry.yarnpkg.com/aws-sdk/-/aws-sdk-2.123.0.tgz#245283323ce73e3d39d0a166861451ce129ca8be"
+aws-sdk@^2.149.0:
+  version "2.149.0"
+  resolved "https://registry.yarnpkg.com/aws-sdk/-/aws-sdk-2.149.0.tgz#76f53722a7780bdb3191e83f27c10108c6fe9813"
   dependencies:
     buffer "4.9.1"
     crypto-browserify "1.0.9"
@@ -13,7 +13,7 @@ aws-sdk@^2.114.0:
     querystring "0.2.0"
     sax "1.2.1"
     url "0.10.3"
-    uuid "3.0.1"
+    uuid "3.1.0"
     xml2js "0.4.17"
     xmlbuilder "4.2.1"
 
@@ -80,9 +80,9 @@ uuid-validate@^0.0.2:
   version "0.0.2"
   resolved "https://registry.yarnpkg.com/uuid-validate/-/uuid-validate-0.0.2.tgz#ed883d26cf0d1819763abfa315e9626ddb67c8e8"
 
-uuid@3.0.1:
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.0.1.tgz#6544bba2dfda8c1cf17e629a3a305e2bb1fee6c1"
+uuid@3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.1.0.tgz#3dd3d3e790abc24d7b0d3a034ffababe28ebbc04"
 
 xml2js@0.4.17:
   version "0.4.17"
