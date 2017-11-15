@@ -20,16 +20,6 @@ exports.handle = function (e, ctx) {
         S: e.headers['x-user-id']
       }
     },
-    Expected: {
-      _id: {
-        Value: { S: e.addressid },
-        Exists: true
-      },
-      userid: {
-        Value: { S: e.headers['x-user-id'] },
-        Exists: true
-      }
-    },
     ReturnConsumedCapacity: 'NONE',
     ReturnItemCollectionMetrics: 'NONE',
     ReturnValues: 'NONE'
