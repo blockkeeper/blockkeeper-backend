@@ -30,7 +30,12 @@ exports.handle = function (e, ctx) {
             S: e.headers['x-user-id']
           },
           data: {
-            S: i.data
+            M: {
+              addData: {S: i.data.addData},
+              tagSize: {N: i.data.tagSize.toString()},
+              cypher: {L: i.data.cypher.map(i => { return {'N': i.toString()} })},
+              iv: {L: i.data.iv.map(i => { return {'N': i.toString()} })}
+            }
           },
           type: {
             S: i.type
@@ -40,7 +45,16 @@ exports.handle = function (e, ctx) {
     }
     if (i.tscs.length > 0) {
       putItem.PutRequest.Item.tscs = {
-        SS: i.tscs
+        L: i.tscs.map(i => {
+          return {
+            M: {
+              addData: {S: i.addData},
+              tagSize: {N: i.tagSize.toString()},
+              cypher: {L: i.cypher.map(i => { return {'N': i.toString()} })},
+              iv: {L: i.iv.map(i => { return {'N': i.toString()} })}
+            }
+          }
+        })
       }
     }
     puts.push(putItem)

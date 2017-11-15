@@ -28,7 +28,12 @@ exports.handle = function (e, ctx) {
     }
     ctx.succeed({
       _id: e.headers['x-user-id'],
-      data: result.Item.data.S
+      data: {
+        addData: result.Item.data.M.addData.S,
+        tagSize: parseInt(result.Item.data.M.tagSize.N),
+        cypher: result.Item.data.M.cypher.L.map(i => { return parseInt(i.N) }),
+        iv: result.Item.data.M.iv.L.map(i => { return parseInt(i.N) })
+      }
     })
   })
 }

@@ -25,7 +25,12 @@ exports.handle = function (e, ctx) {
     data: {
       Action: 'PUT',
       Value: {
-        S: e.body.data
+        M: {
+          addData: {S: e.body.data.addData},
+          tagSize: {N: e.body.data.tagSize.toString()},
+          cypher: {L: e.body.data.cypher.map(i => { return {'N': i.toString()} })},
+          iv: {L: e.body.data.iv.map(i => { return {'N': i.toString()} })}
+        }
       }
     },
     type: {
@@ -39,7 +44,17 @@ exports.handle = function (e, ctx) {
     updates.tscs = {
       Action: 'PUT',
       Value: {
-        SS: e.body.tscs
+        L: e.body.tscs.map(i => {
+          return {
+            M: {
+              addData: {S: i.addData},
+              tagSize: {N: i.tagSize.toString()},
+              cypher: {L: i.cypher.map(i => { return {'N': i.toString()} })},
+              iv: {L: i.iv.map(i => { return {'N': i.toString()} })}
+            }
+
+          }
+        })
       }
     }
   }

@@ -18,7 +18,20 @@ exports.handle = function (e, ctx) {
         S: e.headers['x-user-id']
       },
       data: {
-        S: e.body.data
+        M: {
+          addData: {
+            S: e.body.data.addData
+          },
+          tagSize: {
+            N: e.body.data.tagSize.toString()
+          },
+          cypher: {
+            L: e.body.data.cypher.map(i => { return {'N': i.toString()} })
+          },
+          iv: {
+            L: e.body.data.iv.map(i => { return {'N': i.toString()} })
+          }
+        }
       }
     },
     ReturnValues: 'NONE',

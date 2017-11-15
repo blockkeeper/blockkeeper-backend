@@ -28,11 +28,28 @@ exports.handle = function (e, ctx) {
     if (!result || !result.Item) {
       return ctx.fail('Address not found')
     }
+    if (result.Item.tscs === undefined) { // tscs not required
+      result.Item.tscs = {
+        L: []
+      }
+    }
     ctx.succeed({
       _id: result.Item._id.S,
-      data: result.Item.data.S,
+      data: {
+        addData: result.Item.data.M.addData.S,
+        tagSize: parseInt(result.Item.data.M.tagSize.N),
+        cypher: result.Item.data.M.cypher.L.map(i => { return parseInt(i.N) }),
+        iv: result.Item.data.M.iv.L.map(i => { return parseInt(i.N) })
+      },
       type: result.Item.type.S,
-      tscs: result.Item.tscs && result.Item.tscs.SS ? result.Item.tscs.SS : []
+      tscs: result.Item.tscs.L.map(i => {
+        return {
+          addData: i.M.addData.S,
+          tagSize: parseInt(i.M.tagSize.N),
+          cypher: i.M.cypher.L.map(i => { return parseInt(i.N) }),
+          iv: i.M.iv.L.map(i => { return parseInt(i.N) })
+        }
+      })
     })
   })
 }

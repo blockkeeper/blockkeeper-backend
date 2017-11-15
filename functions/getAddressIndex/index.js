@@ -44,17 +44,36 @@ exports.handle = function (e, ctx) {
     }
     const formatResult = {
       addresses: result.Items.map((obj) => {
+        if (obj.tscs === undefined) { // tscs not required
+          obj.tscs = {
+            L: []
+          }
+        }
         return {
           _id: obj._id.S,
-          data: obj.data.S,
+          data: {
+            addData: obj.data.M.addData.S,
+            tagSize: parseInt(obj.data.M.tagSize.N),
+            cypher: obj.data.M.cypher.L.map(i => { return parseInt(i.N) }),
+            iv: obj.data.M.iv.L.map(i => { return parseInt(i.N) })
+          },
           type: obj.type.S,
-          tscs: obj.tscs && obj.tscs.SS ? obj.tscs.SS : []
+          tscs: obj.tscs.L.map(i => {
+            return {
+              addData: i.M.addData.S,
+              tagSize: parseInt(i.M.tagSize.N),
+              cypher: i.M.cypher.L.map(i => { return parseInt(i.N) }),
+              iv: i.M.iv.L.map(i => { return parseInt(i.N) })
+            }
+          })
         }
       })
     }
+
     if (result.LastEvaluatedKey) {
       formatResult.lastkey = result.LastEvaluatedKey._id.S
     }
+
     ctx.succeed(formatResult)
   })
 }
