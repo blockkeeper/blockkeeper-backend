@@ -1,3 +1,5 @@
+const async = require('async')
+const validate = require('uuid-validate')
 const AWSDynamodb = require('aws-sdk/clients/dynamodb')
 let dynamodb = new AWSDynamodb()
 const tableName = 'bk_rates'  // TODO move to config
@@ -15,9 +17,7 @@ const scanRates = (dynamoRates, lastKey, cb) => {
     queryParameter.ExclusiveStartKey = lastKey
   }
   dynamodb.scan(queryParameter, (err, result) => {
-    if (err) {
-      return cb(err)
-    }
+    if (err) return cb(err)
     if (result.LastEvaluatedKey) {
       scanRates(
         [].concat(dynamoRates, result.Items),
@@ -31,11 +31,9 @@ const scanRates = (dynamoRates, lastKey, cb) => {
 }
 
 exports.handle = function (e, ctx) {
-  scanRates([], null, (err, dynamoRates) => {
-    if (err) {
-      console.log(err)
-      return ctx.fail()
-    } else {
+  async.parallel([(cb) => {
+    scanRates([], null, (err, dynamoRates) => {
+      if (err) return cb(err)
       const apiResult = {
         _t: new Date().toISOString(),
         pairs: {}
@@ -43,7 +41,42 @@ exports.handle = function (e, ctx) {
       dynamoRates.forEach((i) => {
         apiResult.pairs[i.pair.S] = Number(i.rate.N)
       })
-      ctx.succeed(apiResult)
+      cb(null, apiResult)
+    })
+  }, (cb) => {
+    // do analytics table update
+    if (validate(e.headers['x-user-id'], 4) === false) return cb()
+    dynamodb.updateItem({
+      TableName: 'bk_analytics',
+      Key: {
+        userid: {
+          S: e.headers['x-user-id']
+        }
+      },
+      AttributeUpdates: {
+        lastTs: {
+          Action: 'ADD',
+          Value: {
+            NS: [
+              (new Date().setHours(0, 0, 0, 0) / 1000).toString()
+            ]
+          }
+        }
+      },
+      ReturnConsumedCapacity: 'NONE',
+      ReturnItemCollectionMetrics: 'NONE',
+      ReturnValues: 'NONE'
+    }, (err) => {
+      // ignore error
+      if (err) console.log(err)
+      cb()
+    })
+  }], (err, res) => {
+    if (err) {
+      console.log(err)
+      ctx.fail()
+    } else {
+      ctx.succeed(res[0])
     }
   })
 }

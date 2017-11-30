@@ -1,6 +1,8 @@
 {
   "dependencies": {
-    "aws-sdk": "^2.149.0"
+    "async": "^2.6.0",
+    "aws-sdk": "^2.149.0",
+    "uuid-validate": "^0.0.2"
   },
   "name": "getRates",
   "private": true,
