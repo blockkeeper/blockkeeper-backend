@@ -58,3 +58,4 @@ typings/
 .env
 
 .DS_Store
+functions/analyticsToS3/env.json

@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "dynamodbexportcsv": "^0.2.4"
+  },
+  "name": "analyticsToS3",
+  "private": true,
+  "version": "0.1.0",
+  "main": "index.js"
+}

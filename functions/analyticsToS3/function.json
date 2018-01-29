@@ -1,0 +1,5 @@
+{
+  "name": "analyticsToS3",
+  "description": "exports dynamodb table to S3 (CSV format)",
+  "timeout": 60
+}
