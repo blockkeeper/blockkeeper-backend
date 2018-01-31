@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "dynamodbexportcsv": "^0.2.4"
+    "dynamodbexportcsv": "https://github.com/yeahoffline/DynamoDbExportCsv"
   },
   "name": "analyticsToS3",
   "private": true,

@@ -79,9 +79,9 @@ declare.js@~0.0.4:
   version "0.0.8"
   resolved "https://registry.yarnpkg.com/declare.js/-/declare.js-0.0.8.tgz#0478adff9564c004f51df73d8bc134019d28dcde"
 
-dynamodbexportcsv@^0.2.4:
+"dynamodbexportcsv@https://github.com/yeahoffline/DynamoDbExportCsv":
   version "0.2.4"
-  resolved "https://registry.yarnpkg.com/dynamodbexportcsv/-/dynamodbexportcsv-0.2.4.tgz#9eee540511857ded63f15ef335409c813f8cd109"
+  resolved "https://github.com/yeahoffline/DynamoDbExportCsv#3d5820a9ec53c656ad5153e49d7eab2bcbffc6bc"
   dependencies:
     async "~2.1.4"
     aws-sdk "~2.7.20"
