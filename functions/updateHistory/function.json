@@ -1,0 +1,5 @@
+{
+  "name": "updateHistory",
+  "timeout": 180,
+  "description": "Asks cryptocompare api for historic rates and stores them to dynamodb."
+}
