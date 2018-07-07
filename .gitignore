@@ -58,4 +58,6 @@ typings/
 .env
 
 .DS_Store
+
+#aws env credentials
 functions/analyticsToS3/env.json
