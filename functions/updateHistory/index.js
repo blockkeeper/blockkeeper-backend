@@ -71,6 +71,18 @@ exports.handle = async (e, ctx) => {
         ctx.fail(e)
       }
     }
+    // add crypto history for BTC only
+    if (f === 'BTC') {
+      for (let f2 of fsyms) {
+        if (f === f2) continue
+        try {
+          await insertHistory(types.hour, f, f2)
+          await insertHistory(types.day, f, f2)
+        } catch (e) {
+          ctx.fail(e)
+        }
+      }
+    }
   }
   ctx.succeed()
 }
