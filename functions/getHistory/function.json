@@ -1,0 +1,5 @@
+{
+  "name": "getHistory",
+  "description": "get coin rates history data",
+  "memory": 512
+}

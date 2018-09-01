@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "aws-sdk": "^2.262.1",
+    "moment": "^2.22.2"
+  },
+  "name": "getHistory",
+  "private": true,
+  "version": "0.1.0",
+  "main": "index.js"
+}
