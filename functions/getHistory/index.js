@@ -32,7 +32,6 @@ async function getHistory (type, table, pair, ts) {
     ReturnConsumedCapacity: 'NONE'
   }).promise()
 
-  // TODO restrucutre
   return {
     type: type,
     pair: pair,
@@ -41,6 +40,8 @@ async function getHistory (type, table, pair, ts) {
         parseInt(r.ts.N),
         parseFloat(r.avg.N)
       ]
+    }).sort((a, b) => {
+      return a[0] - b[0]
     })
   }
 }
@@ -64,6 +65,7 @@ exports.handle = async function (e, ctx) {
   const startHalfyear = moment().subtract(6, 'month')
   const startYear = moment().subtract(1, 'year')
   const end = moment()
+  const apiRes = {}
 
   // last 24 hours -> 24 entries
   while (startHourly.isBefore(end)) {
@@ -106,6 +108,17 @@ exports.handle = async function (e, ctx) {
     stack.push(getHistory('halfyearly', dailyTableName, pair, halfyear))
     stack.push(getHistory('yearly', dailyTableName, pair, year))
   }
-
-  ctx.succeed(await Promise.all(stack))
+  const rawData = await Promise.all(stack)
+  for (let r of rawData) {
+    if (apiRes[r.type] && apiRes[r.type][r.pair]) {
+      throw ctx.fail('rawData broken') // should never happen
+    } else if (apiRes[r.type]) {
+      apiRes[r.type][r.pair] = r.data
+    } else {
+      apiRes[r.type] = {
+        [r.pair]: r.data
+      }
+    }
+  }
+  ctx.succeed(apiRes)
 }
