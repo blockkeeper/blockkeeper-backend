@@ -58,7 +58,7 @@ exports.handle = async function (e, ctx) {
   const quater = []
   const halfyear = []
   const year = []
-  const startHourly = moment().subtract(1, 'day')
+  const startHourly = moment().subtract(2, 'days')
   const startWeek = moment().subtract(1, 'week')
   const startMonth = moment().subtract(1, 'month')
   const startQuater = moment().subtract(3, 'month')
@@ -67,7 +67,7 @@ exports.handle = async function (e, ctx) {
   const end = moment()
   const apiRes = {}
 
-  // last 24 hours -> 24 entries
+  // last 48 hours
   while (startHourly.isBefore(end)) {
     hour.push(startHourly.startOf('hour').format('X'))
     startHourly.add(1, 'hour')
